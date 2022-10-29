@@ -110,51 +110,19 @@ fn main() {
 }
 
 fn fill_style_buffer(sbuf: &mut text::TextBuffer, s: &str) {
-    let mut local_buf = vec!['A' as u8; s.len()];
+    let mut local_buf = vec![b'A'; s.len()];
     for token in Lexer::new(s.bytes(), BufferType::Span) {
-        let mut start: usize = 0;
-        let mut last: usize = 0;
+        use TokenType::*;
+        let c = match token.kind {
+            CurlyOpen | CurlyClose | BracketOpen | BracketClose | Colon | Comma | Invalid => 'A',
+            String => 'B',
+            BooleanTrue | BooleanFalse | Null => 'C',
+            Number => 'D',
+        };
         if let Buffer::Span(Span { first, end }) = token.buf {
-            start = first as _;
-            last = end as _;
-        }
-        match token.kind {
-            TokenType::CurlyOpen => {
-                local_buf[start..last].copy_from_slice("A".repeat(last - start).as_bytes())
-            }
-            TokenType::String => {
-                local_buf[start..last].copy_from_slice("B".repeat(last - start).as_bytes())
-            }
-            TokenType::CurlyClose => {
-                local_buf[start..last].copy_from_slice("A".repeat(last - start).as_bytes())
-            }
-            TokenType::BracketOpen => {
-                local_buf[start..last].copy_from_slice("A".repeat(last - start).as_bytes())
-            }
-            TokenType::BracketClose => {
-                local_buf[start..last].copy_from_slice("A".repeat(last - start).as_bytes())
-            }
-            TokenType::Colon => {
-                local_buf[start..last].copy_from_slice("A".repeat(last - start).as_bytes())
-            }
-            TokenType::Comma => {
-                local_buf[start..last].copy_from_slice("A".repeat(last - start).as_bytes())
-            }
-            TokenType::BooleanTrue => {
-                local_buf[start..last].copy_from_slice("C".repeat(last - start).as_bytes())
-            }
-            TokenType::BooleanFalse => {
-                local_buf[start..last].copy_from_slice("C".repeat(last - start).as_bytes())
-            }
-            TokenType::Number => {
-                local_buf[start..last].copy_from_slice("D".repeat(last - start).as_bytes())
-            }
-            TokenType::Null => {
-                local_buf[start..last].copy_from_slice("C".repeat(last - start).as_bytes())
-            }
-            TokenType::Invalid => {
-                local_buf[start..last].copy_from_slice("A".repeat(last - start).as_bytes())
-            }
+            let start = first as _;
+            let last = end as _;
+            local_buf[start..last].copy_from_slice(c.to_string().repeat(last - start).as_bytes());
         }
     }
     sbuf.set_text(&String::from_utf8_lossy(&local_buf));
