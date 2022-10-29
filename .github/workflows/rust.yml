@@ -15,19 +15,24 @@ jobs:
       with:
         name: resters-windows
         path: target/release/resters.exe
-  mac-and-ubuntu:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest]
-    
+  ubuntu:
+    runs-on: ubuntu-latest
     steps:
     - name: Download deps
-      run: |
-         if [ "$RUNNER_OS" == "Linux" ]; then
-          sudo apt-get update && sudo apt-get install -y libpangocairo-1.0-0 
-         fi
+      run: sudo apt-get update && sudo apt-get install -y libpango1.0-dev libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev
       shell: bash
+    - uses: actions/checkout@v2
+    - name: Build
+      shell: bash
+      run: cargo build --release
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: resters-linux
+        path: target/release/resters
+  macos:
+    runs-on: macos-latest
+    steps:
     - uses: actions/checkout@v2
     - name: Build
       shell: bash
@@ -35,5 +40,5 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: resters-${{ matrix.os }}
+        name: resters-macos
         path: target/release/resters
