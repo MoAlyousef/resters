@@ -1,10 +1,11 @@
 [package]
 name = "resters"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "A lightweight cross-platform Rest API tester gui built using fltk-rs"
+repository = "https://github.com/MoAlyousef/resters"
 license = "MIT"
-categories = ["visualization", "Web programming"]
+categories = ["visualization"]
 documentation = "https://docs.rs/resters"
 readme = "README.md"
 keywords = ["cross-platform", "rest", "api", "gui", "http"]
